@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/HudTheme.TextView"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imageView"
+        android:layout_marginStart="0dp"
+        android:layout_toEndOf="@id/imageView"
+        android:fontFamily="sans-serif"
+        android:text="@string/face_name"
+        android:textAlignment="textStart"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:contentDescription="@string/face_name"
+        android:src="@drawable/me1" />
+
+    <ListView
+        android:id="@+id/detailsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textView"
+        android:layout_alignBottom="@id/imageView"
+        android:layout_toEndOf="@id/imageView"
+        android:theme="@style/HudTheme"
+        android:visibility="visible"
+        tools:visibility="visible"
+        tools:listitem="@tools:sample/us_zipcodes"/>
+
+
+</RelativeLayout>
