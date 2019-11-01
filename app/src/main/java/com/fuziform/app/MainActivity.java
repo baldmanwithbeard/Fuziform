@@ -33,44 +33,35 @@ import java.io.InputStream;
 
 //import com.vuzix.hud.actionmenu.DefaultActionMenuItemView;
 public class MainActivity extends ActionMenuActivity {
-    private MenuItem BrowseForImage;
-    private MenuItem FindFace;
     String resultMessage = "";
     private static final int REQUEST_TAKE_PHOTO = 0;
+    private final int PICK_IMAGE = 1;
     // The URI of photo taken with camera
     private Uri mUriPhotoTaken;
 
-    //    private ListView listView;
-    // Add your Face endpoint to your environment variables.
-//    private final String apiEndpoint = System.getenv("FACE_ENDPOINT");
     private final String apiEndpoint = "https://facialrecognitionresource.cognitiveservices.azure.com/face/v1.0";
-    // Add your Face subscription key to your environment variables.
-//    private final String subscriptionKey = System.getenv("FACE_SUBSCRIPTION_KEY");
     private final String subscriptionKey = "e67038c399f54a49a1e7854811a398e6";
-
     private final FaceServiceClient faceServiceClient =
             new FaceServiceRestClient(apiEndpoint, subscriptionKey);
-
-    private final int PICK_IMAGE = 1;
     private ProgressDialog detectionProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 //        listView = findViewById(R.id.detailsView);
         detectionProgressDialog = new ProgressDialog(this);
         
     }
 
-
+    @Override
     protected boolean onCreateActionMenu(Menu menu) {
         super.onCreateActionMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        BrowseForImage = menu.findItem(R.id.action_menu_browse);
         return true;
     }
 
+    @Override
     protected boolean alwaysShowActionMenu() {
         return false;
     }
@@ -96,6 +87,10 @@ public class MainActivity extends ActionMenuActivity {
                 setInfo(e.getMessage());
             }
         }
+    }
+
+    public void manageFaces(MenuItem item){
+        startActivity(new Intent(this, ManageFaces.class));
     }
 
     @Override
@@ -188,6 +183,7 @@ public class MainActivity extends ActionMenuActivity {
                 imageView.setImageBitmap(
                         drawFaceRectanglesOnBitmap(imageBitmap, result));
                 imageBitmap.recycle();
+                setInfo(resultMessage);
             }
         };
 

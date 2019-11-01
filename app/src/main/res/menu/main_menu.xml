@@ -5,4 +5,5 @@
     <!--This are the main Navigation Items for the Application. The ActionMenu Activity will expand this menu and make it its main navigation input with Animation-->
     <item android:id="@+id/action_menu_browse" android:title="@string/browseMenuItem" android:icon="@drawable/baseline_android_24" android:onClick="browseForImage" android:enabled="true"/>
     <item android:id="@+id/action_menu_find" android:title="@string/findFaceMenuItem" android:icon="@drawable/baseline_android_24" android:onClick="findFace" android:enabled="true"/>
+    <item android:id="@+id/action_menu_manageFaces" android:title="@string/manageFaces" android:icon="@drawable/baseline_android_24" android:onClick="manageFaces" android:enabled="true"/>
 </menu>
