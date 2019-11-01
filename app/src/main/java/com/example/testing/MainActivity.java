@@ -1,4 +1,6 @@
 package com.example.testing;
+
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -10,10 +12,12 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.microsoft.projectoxford.face.FaceServiceClient;
 import com.microsoft.projectoxford.face.FaceServiceRestClient;
@@ -23,10 +27,20 @@ import com.vuzix.hud.actionmenu.ActionMenuActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+//import com.vuzix.hud.actionmenu.DefaultActionMenuItemView;
 public class MainActivity extends ActionMenuActivity {
-//    private ListView listView;
+    private MenuItem BrowseForImage;
+    private MenuItem FindFace;
+    String resultMessage = "";
+    private static final int REQUEST_TAKE_PHOTO = 0;
+    // The URI of photo taken with camera
+    private Uri mUriPhotoTaken;
+
+    //    private ListView listView;
     // Add your Face endpoint to your environment variables.
 //    private final String apiEndpoint = System.getenv("FACE_ENDPOINT");
     private final String apiEndpoint = "https://facialrecognitionresource.cognitiveservices.azure.com/face/v1.0";
@@ -45,20 +59,45 @@ public class MainActivity extends ActionMenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        listView = findViewById(R.id.detailsView);
-        Button button1 = findViewById(R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(
-                        intent, "Select Picture"), PICK_IMAGE);
-            }
-        });
-
         detectionProgressDialog = new ProgressDialog(this);
         
     }
+
+
+    protected boolean onCreateActionMenu(Menu menu) {
+        super.onCreateActionMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        BrowseForImage = menu.findItem(R.id.action_menu_browse);
+        return true;
+    }
+
+    protected boolean alwaysShowActionMenu() {
+        return false;
+    }
+
+    public void browseForImage(MenuItem item) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(
+                intent, "Select Picture"), PICK_IMAGE);
+    }
+// findFace doesn't get used yet... (needs to be solved)
+    public void findFace(MenuItem item) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            // Save the photo taken to a temporary file.
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            try {
+                File file = File.createTempFile("IMG_", ".jpg", storageDir);
+                mUriPhotoTaken = Uri.fromFile(file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoTaken);
+                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+            } catch (IOException e) {
+                setInfo(e.getMessage());
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -72,7 +111,9 @@ public class MainActivity extends ActionMenuActivity {
                 imageView.setImageBitmap(bitmap);
 
                 // Comment out for tutorial
+
                 detectAndFrame(bitmap);
+                setInfo(resultMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -86,66 +127,69 @@ public class MainActivity extends ActionMenuActivity {
         ByteArrayInputStream inputStream =
                 new ByteArrayInputStream(outputStream.toByteArray());
 
-        AsyncTask<InputStream, String, Face[]> detectTask =
-                new AsyncTask<InputStream, String, Face[]>() {
-                    String exceptionMessage = "";
+        @SuppressLint("StaticFieldLeak") AsyncTask<InputStream, String, Face[]> detectTask = new AsyncTask<InputStream, String, Face[]>() {
+            String exceptionMessage = "";
 
-                    @Override
-                    protected Face[] doInBackground(InputStream... params) {
-                        try {
-                            publishProgress("Detecting...");
-                            Face[] result = faceServiceClient.detect(
-                                    params[0],
-                                    true,         // returnFaceId
-                                    false,        // returnFaceLandmarks
-                                    null          // returnFaceAttributes:
-                                /* new FaceServiceClient.FaceAttributeType[] {
-                                    FaceServiceClient.FaceAttributeType.Age,
-                                    FaceServiceClient.FaceAttributeType.Gender }
-                                */
-                            );
-                            if (result == null){
-                                publishProgress(
-                                        "Detection Finished. Nothing detected");
-                                return null;
-                            }
-                            publishProgress(String.format(
-                                    "Detection Finished. %d face(s) detected",
-                                    result.length));
-                            return result;
-                        } catch (Exception e) {
-                            exceptionMessage = String.format(
-                                    "Detection failed: %s", e.getMessage());
-                            return null;
-                        }
+            @SuppressLint("DefaultLocale")
+            @Override
+            protected Face[] doInBackground(InputStream... params) {
+                try {
+                    publishProgress("Detecting...");
+                    Face[] result = faceServiceClient.detect(
+                            params[0],
+                            true,         // returnFaceId
+                            false,        // returnFaceLandmarks
+                            null          // returnFaceAttributes:
+                        /* new FaceServiceClient.FaceAttributeType[] {
+                            FaceServiceClient.FaceAttributeType.Age,
+                            FaceServiceClient.FaceAttributeType.Gender }
+                        */
+                    );
+                    if (result == null) {
+                        publishProgress(
+                                "Detection Finished. Nothing detected");
+                        return null;
                     }
+                    resultMessage = String.format(
+                            "Detection Finished. %d face(s) detected",
+                            result.length);
+                    publishProgress(resultMessage);
+                    return result;
+                } catch (Exception e) {
+                    exceptionMessage = String.format(
+                            "Detection failed: %s", e.getMessage());
+                    return null;
+                }
+            }
 
-                    @Override
-                    protected void onPreExecute() {
-                        //TODO: show progress dialog
-                        detectionProgressDialog.show();
-                    }
-                    @Override
-                    protected void onProgressUpdate(String... progress) {
-                        //TODO: update progress
-                        detectionProgressDialog.setMessage(progress[0]);
-                    }
-                    @Override
-                    protected void onPostExecute(Face[] result) {
-                        //TODO: update face frames
-                        detectionProgressDialog.dismiss();
+            @Override
+            protected void onPreExecute() {
+                //TODO: show progress dialog
+                detectionProgressDialog.show();
+            }
 
-                        if(!exceptionMessage.equals("")){
-                            showError(exceptionMessage);
-                        }
-                        if (result == null) return;
+            @Override
+            protected void onProgressUpdate(String... progress) {
+                //TODO: update progress
+                detectionProgressDialog.setMessage(progress[0]);
+            }
 
-                        ImageView imageView = findViewById(R.id.imageView);
-                        imageView.setImageBitmap(
-                                drawFaceRectanglesOnBitmap(imageBitmap, result));
-                        imageBitmap.recycle();
-                    }
-                };
+            @Override
+            protected void onPostExecute(Face[] result) {
+                //TODO: update face frames
+                detectionProgressDialog.dismiss();
+
+                if (!exceptionMessage.equals("")) {
+                    showError(exceptionMessage);
+                }
+                if (result == null) return;
+
+                ImageView imageView = findViewById(R.id.imageView);
+                imageView.setImageBitmap(
+                        drawFaceRectanglesOnBitmap(imageBitmap, result));
+                imageBitmap.recycle();
+            }
+        };
 
         detectTask.execute(inputStream);
     }
@@ -159,6 +203,7 @@ public class MainActivity extends ActionMenuActivity {
                     }})
                 .create().show();
     }
+
     private static Bitmap drawFaceRectanglesOnBitmap(
             Bitmap originalBitmap, Face[] faces) {
         Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -180,5 +225,9 @@ public class MainActivity extends ActionMenuActivity {
             }
         }
         return bitmap;
+    }
+    private void setInfo(String info) {
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(info);
     }
 }

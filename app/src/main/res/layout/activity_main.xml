@@ -5,8 +5,6 @@
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerHorizontal="true"
-    android:layout_centerVertical="true"
     tools:context=".MainActivity">
 
 
@@ -27,7 +25,10 @@
         android:id="@+id/imageView"
         android:layout_width="128dp"
         android:layout_height="128dp"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/face_name"
+        android:cropToPadding="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/me1" />
 
 <!--    <ListView-->
@@ -42,10 +43,4 @@
 <!--        tools:visibility="visible"-->
 <!--        tools:listitem="@tools:sample/us_zipcodes"/>-->
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Browse for a face image"
-        android:id="@+id/button1"
-        android:layout_alignParentBottom="true"/>
 </RelativeLayout>
