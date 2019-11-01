@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fusiform</string>
+    <string name="app_name">Fuziform</string>
     <string name="face_name"><u>John Doe</u></string>
     <string name="browseMenuItem">Browse Photos</string>
     <string name="findFaceMenuItem">Find a Face!</string>

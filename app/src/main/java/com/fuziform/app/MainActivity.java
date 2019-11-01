@@ -1,4 +1,4 @@
-package com.example.testing;
+package com.fuziform.app;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
