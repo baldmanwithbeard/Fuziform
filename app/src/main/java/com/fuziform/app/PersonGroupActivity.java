@@ -1,141 +1,142 @@
-////
-//// Copyright (c) Microsoft. All rights reserved.
-//// Licensed under the MIT license.
-////
-//// Microsoft Cognitive Services (formerly Project Oxford): https://www.microsoft.com/cognitive-services
-////
-//// Microsoft Cognitive Services (formerly Project Oxford) GitHub:
-//// https://github.com/Microsoft/Cognitive-Face-Android
-////
-//// Copyright (c) Microsoft Corporation
-//// All rights reserved.
-////
-//// MIT License:
-//// Permission is hereby granted, free of charge, to any person obtaining
-//// a copy of this software and associated documentation files (the
-//// "Software"), to deal in the Software without restriction, including
-//// without limitation the rights to use, copy, modify, merge, publish,
-//// distribute, sublicense, and/or sell copies of the Software, and to
-//// permit persons to whom the Software is furnished to do so, subject to
-//// the following conditions:
-////
-//// The above copyright notice and this permission notice shall be
-//// included in all copies or substantial portions of the Software.
-////
-//// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
-//// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-//// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-//// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-//// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-//// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-////
-//package com.fuziform.app;
 //
-//import android.app.ProgressDialog;
-//import android.content.Context;
-//import android.content.Intent;
-//import android.graphics.drawable.Drawable;
-//import android.net.Uri;
-//import android.os.AsyncTask;
-//import android.os.Bundle;
-//import android.view.ActionMode;
-//import android.view.LayoutInflater;
-//import android.view.Menu;
-//import android.view.MenuInflater;
-//import android.view.MenuItem;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.AbsListView;
-//import android.widget.AdapterView;
-//import android.widget.BaseAdapter;
-//import android.widget.Button;
-//import android.widget.CheckBox;
-//import android.widget.CompoundButton;
-//import android.widget.EditText;
-//import android.widget.GridView;
-//import android.widget.ImageView;
-//import android.widget.TextView;
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license.
 //
-//import androidx.appcompat.app.AppCompatActivity;
+// Microsoft Cognitive Services (formerly Project Oxford): https://www.microsoft.com/cognitive-services
 //
-//import com.microsoft.projectoxford.face.FaceServiceClient;
-//import com.microsoft.projectoxford.face.FaceServiceRestClient;
+// Microsoft Cognitive Services (formerly Project Oxford) GitHub:
+// https://github.com/Microsoft/Cognitive-Face-Android
 //
-//import java.util.ArrayList;
-//import java.util.Iterator;
-//import java.util.List;
-//import java.util.Set;
-//import java.util.UUID;
+// Copyright (c) Microsoft Corporation
+// All rights reserved.
 //
+// MIT License:
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 //
-//public class PersonGroupActivity extends AppCompatActivity {
-//    // Background task of adding a person group.
-//    class AddPersonGroupTask extends AsyncTask<String, String, String> {
-//        // Indicate the next step is to add person in this group, or finish editing this group.
-//        boolean mAddPerson;
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
 //
-//        AddPersonGroupTask(boolean addPerson) {
-//            mAddPerson = addPerson;
-//        }
+// THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//        @Override
-//        protected String doInBackground(String... params) {
+package com.fuziform.app;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.microsoft.projectoxford.face.FaceServiceClient;
+import com.microsoft.projectoxford.face.FaceServiceRestClient;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+
+public class PersonGroupActivity extends AppCompatActivity {
+    // Background task of adding a person group.
+    class AddPersonGroupTask extends AsyncTask<String, String, String> {
+        // Indicate the next step is to add person in this group, or finish editing this group.
+        boolean mAddPerson;
+
+        AddPersonGroupTask(boolean addPerson) {
+            mAddPerson = addPerson;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
 //            addLog("Request: Creating person group " + params[0]);
-//
-//            // Get an instance of face service client.
-//            String apiEndpoint = "https://facialrecognitionresource.cognitiveservices.azure.com/face/v1.0"
-//            String subscriptionKey = "e67038c399f54a49a1e7854811a398e6";
-//            FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);;
-//            try{
-//                publishProgress("Syncing with server to add person group...");
-//
-//                // Start creating person group in server.
-//                faceServiceClient.createLargePersonGroup(
-//                        params[0],
-//                        getString(R.string.faceGroupName),
-//                        getString(R.string.faceGroupDescription));
-//                return params[0];
-//            } catch (Exception e) {
-//                publishProgress(e.getMessage());
+
+            // Get an instance of face service client.
+            String apiEndpoint = "https://facialrecognitionresource.cognitiveservices.azure.com/face/v1.0";
+            String subscriptionKey = "e67038c399f54a49a1e7854811a398e6";
+            FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
+            try{
+                publishProgress("Syncing with server to add person group...");
+
+                // Start creating person group in server.
+                faceServiceClient.createLargePersonGroup(
+                        params[0],
+                        getString(R.string.faceGroupName),
+                        getString(R.string.faceGroupDescription));
+                return params[0];
+            } catch (Exception e) {
+                publishProgress(e.getMessage());
 //                addLog(e.getMessage());
-//                return null;
-//            }
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            setUiBeforeBackgroundTask();
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(String... progress) {
-//            setUiDuringBackgroundTask(progress[0]);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            progressDialog.dismiss();
-//
-//            if (result != null) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            setUiBeforeBackgroundTask();
+        }
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+            setUiDuringBackgroundTask(progress[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progressDialog.dismiss();
+
+            if (result != null) {
 //                addLog("Response: Success. Person group " + result + " created");
-//
-//                personGroupExists = true;
+
+                personGroupExists = true;
 //                GridView gridView = (GridView) findViewById(R.id.gridView_persons);
 //                personGridViewAdapter = new PersonGridViewAdapter();
 //                gridView.setAdapter(personGridViewAdapter);
-//
-//                setInfo("Success. Group " + result + " created");
-//
+
+                setInfo("Success. Group " + result + " created");
+
 //                if (mAddPerson) {
 //                    addPerson();
 //                } else {
 //                    doneAndSave(false);
 //                }
-//            }
-//        }
-//    }
-//
+            }
+        }
+    }
+
 //    class TrainPersonGroupTask extends AsyncTask<String, String, String> {
 //
 //        @Override
@@ -177,7 +178,7 @@
 //            }
 //        }
 //    }
-//
+
 //    class DeletePersonTask extends AsyncTask<String, String, String> {
 //        String mPersonGroupId;
 //        DeletePersonTask(String personGroupId) {
@@ -221,68 +222,68 @@
 //            }
 //        }
 //    }
-//
-//    private void setUiBeforeBackgroundTask() {
-//        progressDialog.show();
-//    }
-//
-//    // Show the status of background detection task on screen.
-//    private void setUiDuringBackgroundTask(String progress) {
-//        progressDialog.setMessage(progress);
-//
-//        setInfo(progress);
-//    }
-//
-//    public void addPerson(View view) {
-//        if (!personGroupExists) {
-//            new AddPersonGroupTask(true).execute(personGroupId);
-//        } else {
-//            addPerson();
-//        }
-//    }
-//
-//    private void addPerson() {
-//        setInfo("");
-//
-//        Intent intent = new Intent(this, PersonActivity.class);
-//        intent.putExtra("AddNewPerson", true);
-//        intent.putExtra("PersonName", "");
-//        intent.putExtra("PersonGroupId", personGroupId);
-//        startActivity(intent);
-//    }
-//
-//    boolean addNewPersonGroup;
-//    boolean personGroupExists;
-//    String personGroupId;
-//    String oldPersonGroupName;
-//
+
+    private void setUiBeforeBackgroundTask() {
+        progressDialog.show();
+    }
+
+    // Show the status of background detection task on screen.
+    private void setUiDuringBackgroundTask(String progress) {
+        progressDialog.setMessage(progress);
+
+        setInfo(progress);
+    }
+
+    public void addPerson(View view) {
+        if (!personGroupExists) {
+            new AddPersonGroupTask(true).execute(personGroupId);
+        } else {
+            addPerson();
+        }
+    }
+
+    private void addPerson() {
+        setInfo("");
+
+        Intent intent = new Intent(this, PersonActivity.class);
+        intent.putExtra("AddNewPerson", true);
+        intent.putExtra("PersonName", "");
+        intent.putExtra("PersonGroupId", personGroupId);
+        startActivity(intent);
+    }
+
+    boolean addNewPersonGroup;
+    boolean personGroupExists;
+    String personGroupId;
+    String oldPersonGroupName;
+
 //    PersonGridViewAdapter personGridViewAdapter;
-//
-//    // Progress dialog popped up when communicating with server.
-//    ProgressDialog progressDialog;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
+
+    // Progress dialog popped up when communicating with server.
+    ProgressDialog progressDialog;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_person_group);
-//
-//        Bundle bundle = getIntent().getExtras();
-//        if (bundle != null) {
-//            addNewPersonGroup = bundle.getBoolean("AddNewPersonGroup");
-//            oldPersonGroupName = bundle.getString("PersonGroupName");
-//            personGroupId = bundle.getString("PersonGroupId");
-//            personGroupExists = !addNewPersonGroup;
-//        }
-//
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            addNewPersonGroup = bundle.getBoolean("AddNewPersonGroup");
+            oldPersonGroupName = bundle.getString("PersonGroupName");
+            personGroupId = bundle.getString("PersonGroupId");
+            personGroupExists = !addNewPersonGroup;
+        }
+
 //        initializeGridView();
-//
-//        progressDialog = new ProgressDialog(this);
+
+        progressDialog = new ProgressDialog(this);
 //        progressDialog.setTitle(getString(R.string.progress_dialog_title));
-//
+
 //        EditText editTextPersonGroupName = (EditText)findViewById(R.id.edit_person_group_name);
 //        editTextPersonGroupName.setText(oldPersonGroupName);
-//    }
-//
+    }
+
 //    private void initializeGridView() {
 //        GridView gridView = (GridView) findViewById(R.id.gridView_persons);
 //
@@ -363,7 +364,7 @@
 //            }
 //        });
 //    }
-//
+
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
@@ -374,27 +375,27 @@
 //            gridView.setAdapter(personGridViewAdapter);
 //        }
 //    }
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        outState.putBoolean("AddNewPersonGroup", addNewPersonGroup);
-//        outState.putString("OldPersonGroupName", oldPersonGroupName);
-//        outState.putString("PersonGroupId", personGroupId);
-//        outState.putBoolean("PersonGroupExists", personGroupExists);
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        addNewPersonGroup = savedInstanceState.getBoolean("AddNewPersonGroup");
-//        personGroupId = savedInstanceState.getString("PersonGroupId");
-//        oldPersonGroupName = savedInstanceState.getString("OldPersonGroupName");
-//        personGroupExists = savedInstanceState.getBoolean("PersonGroupExists");
-//    }
-//
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("AddNewPersonGroup", addNewPersonGroup);
+        outState.putString("OldPersonGroupName", oldPersonGroupName);
+        outState.putString("PersonGroupId", personGroupId);
+        outState.putBoolean("PersonGroupExists", personGroupExists);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        addNewPersonGroup = savedInstanceState.getBoolean("AddNewPersonGroup");
+        personGroupId = savedInstanceState.getString("PersonGroupId");
+        oldPersonGroupName = savedInstanceState.getString("OldPersonGroupName");
+        personGroupExists = savedInstanceState.getBoolean("PersonGroupExists");
+    }
+
 //    public void doneAndSave(View view) {
 //        if (!personGroupExists) {
 //            new AddPersonGroupTask(false).execute(personGroupId);
@@ -419,7 +420,7 @@
 //            finish();
 //        }
 //    }
-//
+
 //    private void deleteSelectedItems() {
 //        List<String> newPersonIdList = new ArrayList<>();
 //        List<Boolean> newPersonChecked = new ArrayList<>();
@@ -441,18 +442,18 @@
 //        personGridViewAdapter.personChecked = newPersonChecked;
 //        personGridViewAdapter.notifyDataSetChanged();
 //    }
-//
-//    // Add a log item.
+
+    // Add a log item.
 //    private void addLog(String log) {
 //        LogHelper.addIdentificationLog(log);
 //    }
-//
-//    // Set the information panel on screen.
-//    private void setInfo(String info) {
-//        TextView textView = (TextView) findViewById(R.id.info);
-//        textView.setText(info);
-//    }
-//
+
+    // Set the information panel on screen.
+    private void setInfo(String info) {
+        TextView textView = (TextView) findViewById(R.id.info);
+        textView.setText(info);
+    }
+
 //    private class PersonGridViewAdapter extends BaseAdapter {
 //
 //        List<String> personIdList;
@@ -529,4 +530,4 @@
 //            return convertView;
 //        }
 //    }
-//}
+}

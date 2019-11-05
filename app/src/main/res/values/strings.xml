@@ -9,7 +9,10 @@
     <string name="existingFace">Train Existing Face</string>
     <string name="faceGroupName">FaceLibrary</string>
     <string name="faceGroupDescription">Just one big old library of faces. I would say book of faces but that would feel a bit unoriginal...</string>
-
+    <string name="user_provided_person_name">Person name</string>
+    <string name="user_provided_description_data">User data</string>
+    <string name="userId">OriginalDefault</string>
+    <string name="progress_dialog_title">Please wait</string>
 
 
 

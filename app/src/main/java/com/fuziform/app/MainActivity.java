@@ -3,8 +3,10 @@ package com.fuziform.app;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,10 +33,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 //import com.vuzix.hud.actionmenu.DefaultActionMenuItemView;
 public class MainActivity extends ActionMenuActivity {
-    String resultMessage = "";
+    public String uniqueId = "";
+    private Boolean firstRun = false;
+    public String resultMessage = "";
     private static final int REQUEST_TAKE_PHOTO = 0;
     private final int PICK_IMAGE = 1;
     // The URI of photo taken with camera
@@ -47,6 +53,9 @@ public class MainActivity extends ActionMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        firstRun = VerifyUser.isFirstRun(this);
+        if (firstRun){addPersonGroup();}
+        uniqueId = VerifyUser.id(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 //        listView = findViewById(R.id.detailsView);
@@ -92,7 +101,15 @@ public class MainActivity extends ActionMenuActivity {
     public void manageFaces(MenuItem item){
         startActivity(new Intent(this, ManageFaces.class));
     }
+    public void addPersonGroup() {
+        String personGroupId = UUID.randomUUID().toString();
 
+        Intent intent = new Intent(this, PersonGroupActivity.class);
+        intent.putExtra("AddNewPersonGroup", true);
+        intent.putExtra("PersonGroupName", "");
+        intent.putExtra("PersonGroupId", personGroupId);
+        startActivity(intent);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
